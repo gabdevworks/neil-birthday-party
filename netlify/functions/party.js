@@ -1,6 +1,8 @@
 import { getStore } from "@netlify/blobs";
 import { guests } from "../../src/data/guests.ts";
 
+const ATTENDANCE_RESET = "2026-10-12-clear-again";
+
 function json(body, status = 200) {
   return new Response(JSON.stringify(body), {
     status,
@@ -13,12 +15,19 @@ function normalize(name) {
 }
 
 async function readState(store) {
-  const [rsvps, extras] = await Promise.all([
+  const [rsvps, extras, reset] = await Promise.all([
     store.get("rsvps", { type: "json" }),
     store.get("extras", { type: "json" }),
+    store.get("attendance-reset"),
   ]);
+  let records = rsvps && typeof rsvps === "object" ? rsvps : {};
+  if (reset !== ATTENDANCE_RESET) {
+    records = {};
+    await store.setJSON("rsvps", records);
+    await store.set("attendance-reset", ATTENDANCE_RESET);
+  }
   return {
-    rsvps: rsvps && typeof rsvps === "object" ? rsvps : {},
+    rsvps: records,
     extras: Array.isArray(extras) ? extras : [],
   };
 }

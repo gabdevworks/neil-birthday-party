@@ -130,7 +130,7 @@ export function clearSession(): void {
   window.sessionStorage.removeItem(SESSION_KEY);
 }
 
-const ATTENDANCE_RESET = "2026-10-12-clear-all";
+const ATTENDANCE_RESET = "2026-10-12-clear-again";
 
 function resetStoredAttendanceOnce(): void {
   if (!canUseStorage()) return;

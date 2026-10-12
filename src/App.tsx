@@ -123,11 +123,6 @@ export default function App() {
     setView("sweep");
   }
 
-  function openAdmin() {
-    window.history.pushState({}, "", "/admin");
-    setAdmin(true);
-  }
-
   function closeAdmin() {
     window.history.pushState({}, "", "/");
     setAdmin(false);
@@ -186,13 +181,6 @@ export default function App() {
                   <span className="party-yell-lead">Let's</span>
                   <span className="party-yell-word">PARTYYYYYYYYYYY!</span>
                 </p>
-                <button
-                  type="button"
-                  className="mt-8 text-xs tracking-[0.22em] text-mist transition hover:text-cyan"
-                  onClick={openAdmin}
-                >
-                  ADMIN
-                </button>
               </motion.section>
             )}
             {view === "invitation" && invitation && (
