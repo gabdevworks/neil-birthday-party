@@ -27,6 +27,7 @@ function PartyTrack() {
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
+    audio.volume = 0.5;
     audio.currentTime = 0;
 
     const start = () => {
