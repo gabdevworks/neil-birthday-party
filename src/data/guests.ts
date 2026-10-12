@@ -49,7 +49,7 @@ export const guests: Guest[] = [
   { id: "G043", fullName: "Jonaber" },
   { id: "G044", fullName: "Averei" },
   { id: "G045", fullName: "Razle" },
-  { id: "G046", fullName: "Justin" },
+  { id: "G046", fullName: "Justine" },
   { id: "G047", fullName: "Janrey" },
   { id: "G048", fullName: "Nico" },
 ];

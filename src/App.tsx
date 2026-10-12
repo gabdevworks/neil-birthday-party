@@ -27,7 +27,11 @@ function PartyTrack() {
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
-    audio.volume = 0.5;
+    const capVolume = () => {
+      if (audio.volume > 0.3) audio.volume = 0.3;
+    };
+    audio.volume = 0.3;
+    audio.addEventListener("volumechange", capVolume);
     audio.currentTime = 0;
 
     const start = () => {
@@ -38,6 +42,7 @@ function PartyTrack() {
     window.addEventListener("pointerdown", start);
     window.addEventListener("keydown", start);
     return () => {
+      audio.removeEventListener("volumechange", capVolume);
       window.removeEventListener("pointerdown", start);
       window.removeEventListener("keydown", start);
     };

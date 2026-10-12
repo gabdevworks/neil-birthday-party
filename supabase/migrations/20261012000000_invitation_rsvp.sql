@@ -313,7 +313,7 @@ insert into public.guests (id, full_name) values
   ('G043', 'Jonaber'),
   ('G044', 'Averei'),
   ('G045', 'Razle'),
-  ('G046', 'Justin'),
+  ('G046', 'Justine'),
   ('G047', 'Janrey'),
   ('G048', 'Nico')
 on conflict (id) do update set full_name = excluded.full_name;
