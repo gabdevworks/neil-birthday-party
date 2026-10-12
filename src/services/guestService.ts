@@ -6,7 +6,7 @@ import {
   readSession,
   writeSession,
 } from "../lib/demoStore";
-import { addGuestName, listRoster } from "../lib/guestRoster";
+import { loadRoster, saveGuestName } from "../lib/guestRoster";
 import { readSharedAttendance, saveSharedAttendance } from "../lib/partyApi";
 import { getSupabase, isSupabaseConfigured } from "../lib/supabase";
 import type { Attendance, OpenedInvitation } from "../types/guest";
@@ -73,7 +73,7 @@ export async function searchGuests(query: string): Promise<Guest[]> {
   const trimmed = query.trim();
   if (!trimmed) return [];
 
-  if (isDemoMode()) return filterGuests(listRoster(), trimmed);
+  if (isDemoMode()) return filterGuests(await loadRoster(), trimmed);
 
   const client = getSupabase();
   if (!client) throw new InvitationServiceError("The invitation service is unavailable. Please try again.");
@@ -88,7 +88,7 @@ export async function searchGuests(query: string): Promise<Guest[]> {
 export async function resolveGuest(query: string): Promise<Guest | null> {
   const trimmed = query.trim();
   if (!trimmed) return null;
-  if (isDemoMode()) return resolveExactGuest(listRoster(), trimmed);
+  if (isDemoMode()) return resolveExactGuest(await loadRoster(), trimmed);
 
   const matches = await searchGuests(trimmed);
   return resolveExactGuest(matches, trimmed);
@@ -119,7 +119,7 @@ export async function readJoiningStatus(fullName: string): Promise<Attendance | 
   if (isDemoMode()) {
     const shared = await readSharedAttendance(trimmed);
     if (shared === "in" || shared === "out") return shared;
-    const guest = resolveExactGuest(listRoster(), trimmed);
+    const guest = resolveExactGuest(await loadRoster(), trimmed);
     const local = guest ? readDemoAttendance(guest.id) : null;
     if (guest && local) {
       await saveSharedAttendance(guest, local);
@@ -136,7 +136,7 @@ export async function openInvitation(fullName: string): Promise<OpenedInvitation
   if (!trimmed) return null;
 
   if (isDemoMode()) {
-    const guest = resolveExactGuest(listRoster(), trimmed);
+    const guest = resolveExactGuest(await loadRoster(), trimmed);
     if (!guest) return null;
     const local = readDemoAttendance(guest.id);
     const shared = await readSharedAttendance(guest.fullName);
@@ -180,7 +180,7 @@ export async function restoreInvitation(): Promise<OpenedInvitation | null> {
       clearSession();
       return null;
     }
-    const guest = listRoster().find((item) => item.id === session.guestId && item.fullName === session.fullName);
+    const guest = (await loadRoster()).find((item) => item.id === session.guestId && item.fullName === session.fullName);
     if (!guest) {
       clearSession();
       return null;
@@ -225,7 +225,7 @@ export function removeInviteTokenFromLocation(): void {
 }
 
 export async function fetchGuestList(): Promise<Guest[]> {
-  if (isDemoMode()) return listRoster();
+  if (isDemoMode()) return loadRoster();
   const client = getSupabase();
   if (!client) throw new InvitationServiceError("The invitation service is unavailable. Please try again.");
   const { data, error } = await client.rpc("list_guests");
@@ -237,7 +237,7 @@ export async function fetchGuestList(): Promise<Guest[]> {
 }
 
 export async function createGuest(fullName: string): Promise<{ ok: true; guest: Guest } | { ok: false; message: string }> {
-  if (isDemoMode()) return addGuestName(fullName);
+  if (isDemoMode()) return saveGuestName(fullName);
   const client = getSupabase();
   if (!client) return { ok: false, message: "The invitation service is unavailable. Please try again." };
   const { data, error } = await client.rpc("add_guest", { p_name: fullName });

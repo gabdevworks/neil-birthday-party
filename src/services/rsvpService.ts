@@ -1,4 +1,4 @@
-import { listRoster } from "../lib/guestRoster";
+import { loadRoster } from "../lib/guestRoster";
 import { demoTokenFor, listDemoConfirmedIds, saveDemoAttendance } from "../lib/demoStore";
 import { listSharedArrivals, saveSharedAttendance } from "../lib/partyApi";
 import { getSupabase, isSupabaseConfigured } from "../lib/supabase";
@@ -28,15 +28,15 @@ function attendanceFrom(value: string | undefined, fallback: Attendance): Attend
   return fallback;
 }
 
-function guestFromDemoToken(sessionToken: string): Guest | null {
+async function guestFromDemoToken(sessionToken: string): Promise<Guest | null> {
   if (!sessionToken.startsWith("demo:")) return null;
   const guestId = sessionToken.slice("demo:".length);
-  return listRoster().find((guest) => guest.id === guestId) ?? null;
+  return (await loadRoster()).find((guest) => guest.id === guestId) ?? null;
 }
 
 export async function saveRsvp(sessionToken: string, attendance: Attendance): Promise<RsvpResult> {
   if (!isSupabaseConfigured()) {
-    const guest = guestFromDemoToken(sessionToken);
+    const guest = await guestFromDemoToken(sessionToken);
     if (!guest || sessionToken !== demoTokenFor(guest.id)) {
       return { ok: false, message: SAVE_ERROR };
     }
@@ -71,8 +71,9 @@ export async function saveRsvp(sessionToken: string, attendance: Attendance): Pr
 
 export async function listArrivals(): Promise<Guest[]> {
   if (!isSupabaseConfigured()) {
+    const roster = await loadRoster();
     const local = listDemoConfirmedIds().flatMap((id) => {
-      const guest = listRoster().find((item) => item.id === id);
+      const guest = roster.find((item) => item.id === id);
       return guest ? [guest] : [];
     });
     const shared = await listSharedArrivals();

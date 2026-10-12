@@ -6,6 +6,7 @@ import { BarPage } from "./components/BarPage";
 import { GuestSearch } from "./components/GuestSearch";
 import { InvitationPage } from "./components/InvitationPage";
 import { PageTransition } from "./components/PageTransition";
+import { publishLocalExtras } from "./lib/guestRoster";
 import { publishLocalRsvps } from "./lib/partyApi";
 import {
   isDemoMode,
@@ -77,7 +78,10 @@ export default function App() {
 
     async function boot() {
       try {
-        if (isDemoMode()) await publishLocalRsvps();
+        if (isDemoMode()) {
+          await publishLocalExtras();
+          await publishLocalRsvps();
+        }
         const inviteToken = readInviteTokenFromLocation();
         if (inviteToken && !isDemoMode()) {
           const opened = await openInvitationLink(inviteToken);

@@ -28,8 +28,28 @@ async function readState(store) {
   }
   return {
     rsvps: records,
-    extras: Array.isArray(extras) ? extras : [],
+    extras: cleanExtras(extras),
   };
+}
+
+function cleanExtras(value) {
+  if (!Array.isArray(value)) return [];
+  return value.flatMap((item) => {
+    if (!item || typeof item !== "object") return [];
+    if (typeof item.id !== "string" || typeof item.fullName !== "string") return [];
+    const fullName = item.fullName.trim().replace(/\s+/g, " ");
+    if (!fullName) return [];
+    return [{ id: item.id, fullName }];
+  });
+}
+
+function nextGuestId(roster) {
+  const nextNumber =
+    roster.reduce((max, guest) => {
+      const value = Number(String(guest.id).slice(1));
+      return Number.isFinite(value) ? Math.max(max, value) : max;
+    }, 0) + 1;
+  return `G${String(nextNumber).padStart(3, "0")}`;
 }
 
 function rosterOf(extras) {
@@ -80,6 +100,26 @@ export default async (request) => {
           return guest ? [{ id: guest.id, fullName: guest.fullName }] : [];
         });
       return json({ arrivals });
+    }
+
+    if (request.method === "GET" && action === "roster") {
+      const state = await readState(store);
+      return json({ extras: state.extras });
+    }
+
+    if (request.method === "POST" && action === "add-guest") {
+      const body = await request.json();
+      const fullName = String(body?.fullName ?? "").trim().replace(/\s+/g, " ");
+      if (!fullName) return json({ ok: false, message: "Enter a name." }, 400);
+      if (fullName.length > 80) return json({ ok: false, message: "That name is too long." }, 400);
+      const state = await readState(store);
+      const roster = rosterOf(state.extras);
+      if (findGuest(roster, fullName)) {
+        return json({ ok: false, message: "That name is already on the list." });
+      }
+      const guest = { id: nextGuestId(roster), fullName };
+      await store.setJSON("extras", [...state.extras, guest]);
+      return json({ ok: true, id: guest.id, fullName: guest.fullName });
     }
 
     if (request.method === "POST" && (action === "rsvp" || action === "sync")) {
