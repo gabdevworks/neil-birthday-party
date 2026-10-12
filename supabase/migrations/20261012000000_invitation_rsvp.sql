@@ -288,7 +288,7 @@ insert into public.guests (id, full_name) values
   ('G018', 'Gab'),
   ('G019', 'Jarwin'),
   ('G020', 'Kirby'),
-  ('G021', 'Medwin'),
+  ('G021', 'Medwyn'),
   ('G022', 'Lhean'),
   ('G023', 'Eric'),
   ('G024', 'Rosey'),

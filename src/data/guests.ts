@@ -24,7 +24,7 @@ export const guests: Guest[] = [
   { id: "G018", fullName: "Gab" },
   { id: "G019", fullName: "Jarwin" },
   { id: "G020", fullName: "Kirby" },
-  { id: "G021", fullName: "Medwin" },
+  { id: "G021", fullName: "Medwyn" },
   { id: "G022", fullName: "Lhean" },
   { id: "G023", fullName: "Eric" },
   { id: "G024", fullName: "Rosey" },
