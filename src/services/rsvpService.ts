@@ -1,5 +1,6 @@
 import { listRoster } from "../lib/guestRoster";
 import { demoTokenFor, listDemoConfirmedIds, saveDemoAttendance } from "../lib/demoStore";
+import { listSharedArrivals, saveSharedAttendance } from "../lib/partyApi";
 import { getSupabase, isSupabaseConfigured } from "../lib/supabase";
 import type { Attendance, Guest, RsvpResult } from "../types/guest";
 
@@ -40,6 +41,7 @@ export async function saveRsvp(sessionToken: string, attendance: Attendance): Pr
       return { ok: false, message: SAVE_ERROR };
     }
     const result = saveDemoAttendance(guest, attendance);
+    await saveSharedAttendance(guest, attendance);
     return {
       ok: true,
       alreadyConfirmed: result.alreadyConfirmed,
@@ -69,10 +71,14 @@ export async function saveRsvp(sessionToken: string, attendance: Attendance): Pr
 
 export async function listArrivals(): Promise<Guest[]> {
   if (!isSupabaseConfigured()) {
-    return listDemoConfirmedIds().flatMap((id) => {
+    const local = listDemoConfirmedIds().flatMap((id) => {
       const guest = listRoster().find((item) => item.id === id);
       return guest ? [guest] : [];
     });
+    const shared = await listSharedArrivals();
+    if (!shared) return local;
+    const seen = new Set(shared.map((guest) => guest.id));
+    return [...shared, ...local.filter((guest) => !seen.has(guest.id))];
   }
 
   const client = getSupabase();

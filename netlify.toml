@@ -8,6 +8,7 @@
 # Vite reads these at build time. Set them in the Netlify site settings.
 # VITE_SUPABASE_URL
 # VITE_SUPABASE_ANON_KEY
+# Without those, RSVPs are shared through the party function and Netlify Blobs.
 
 [[redirects]]
   from = "/*"

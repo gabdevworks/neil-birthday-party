@@ -7,6 +7,7 @@ import {
   writeSession,
 } from "../lib/demoStore";
 import { addGuestName, listRoster } from "../lib/guestRoster";
+import { readSharedAttendance, saveSharedAttendance } from "../lib/partyApi";
 import { getSupabase, isSupabaseConfigured } from "../lib/supabase";
 import type { Attendance, OpenedInvitation } from "../types/guest";
 import { filterGuests, resolveExactGuest } from "../utils/guestSearch";
@@ -116,8 +117,15 @@ export async function readJoiningStatus(fullName: string): Promise<Attendance | 
   const trimmed = fullName.trim();
   if (!trimmed) return null;
   if (isDemoMode()) {
+    const shared = await readSharedAttendance(trimmed);
+    if (shared === "in" || shared === "out") return shared;
     const guest = resolveExactGuest(listRoster(), trimmed);
-    return guest ? readDemoAttendance(guest.id) : null;
+    const local = guest ? readDemoAttendance(guest.id) : null;
+    if (guest && local) {
+      await saveSharedAttendance(guest, local);
+      return local;
+    }
+    return shared === null ? null : local;
   }
   const invitation = await openInvitation(trimmed);
   return invitation?.attendance ?? null;
@@ -130,7 +138,10 @@ export async function openInvitation(fullName: string): Promise<OpenedInvitation
   if (isDemoMode()) {
     const guest = resolveExactGuest(listRoster(), trimmed);
     if (!guest) return null;
-    const attendance = readDemoAttendance(guest.id);
+    const local = readDemoAttendance(guest.id);
+    const shared = await readSharedAttendance(guest.fullName);
+    const attendance = shared === "in" || shared === "out" ? shared : local;
+    if (attendance && attendance !== shared) await saveSharedAttendance(guest, attendance);
     const invitation: OpenedInvitation = {
       guest,
       sessionToken: demoTokenFor(guest.id),

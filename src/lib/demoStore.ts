@@ -60,6 +60,17 @@ export function listDemoConfirmedIds(): string[] {
     .map((record) => record.guestId);
 }
 
+export function listDemoRsvpRecords(): { guestId: string; status: "in" | "out" }[] {
+  const records: { guestId: string; status: "in" | "out" }[] = [];
+  for (const record of Object.values(readRsvps())) {
+    if (record.status === "out") records.push({ guestId: record.guestId, status: "out" });
+    else if (record.status === "in" || record.status === "confirmed") {
+      records.push({ guestId: record.guestId, status: "in" });
+    }
+  }
+  return records;
+}
+
 export function saveDemoAttendance(guest: Guest, attendance: "in" | "out"): { alreadyConfirmed: boolean } {
   if (confirmLock) return { alreadyConfirmed: readDemoAttendance(guest.id) === attendance };
   confirmLock = true;
