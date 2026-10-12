@@ -37,7 +37,7 @@ export function ReservationPopup({ guestName, onDone }: ReservationPopupProps) {
           <Check className="size-8" aria-hidden="true" />
         </motion.div>
         <p className="font-display text-3xl tracking-tight text-snow">You're in, {guestName}</p>
-        <p className="mt-3 text-base text-mist">Your spot is saved. Heading to the bar.</p>
+        <p className="mt-3 text-base text-mist">Your spot is saved. Heading to The Beech.</p>
       </motion.div>
     </motion.div>
   );

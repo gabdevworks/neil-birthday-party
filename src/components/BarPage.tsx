@@ -80,7 +80,7 @@ export function BarPage({ onBack }: BarPageProps) {
       </button>
 
       <header className="mt-6 text-center">
-        <p className="text-xs tracking-[0.28em] text-cyan">THE BAR</p>
+        <p className="text-xs tracking-[0.28em] text-cyan">THE BEECH</p>
         <h1 className="mt-3 font-display text-4xl tracking-tight text-snow sm:text-6xl">Who's coming</h1>
         <p className="mt-3 text-sm text-mist sm:text-base">
           {loading ? "Checking the door..." : `${people.length} ${people.length === 1 ? "person" : "people"} walking in for a drink`}
