@@ -1,4 +1,4 @@
-import { ArrowUpRight, UserRound } from "lucide-react";
+import { ArrowUpRight, LoaderCircle, UserRound } from "lucide-react";
 import { motion } from "framer-motion";
 import type { Guest } from "../data/guests";
 import { splitMatch } from "../utils/guestSearch";
@@ -34,7 +34,10 @@ export function GuestSuggestions({
       className="absolute top-[calc(100%+0.6rem)] z-30 max-h-[min(18rem,42vh)] w-full overflow-y-auto rounded-2xl border border-white/10 bg-navy-2/95 p-2 shadow-[0_18px_50px_rgba(2,6,23,0.55)] backdrop-blur-xl"
     >
       {status === "loading" && (
-        <p className="px-3 py-3 text-sm text-mist">Looking up invitations...</p>
+        <p className="flex items-center gap-2 px-3 py-3 text-sm text-mist">
+          <LoaderCircle className="size-4 shrink-0 animate-spin text-cyan" aria-hidden="true" />
+          Looking up invitations...
+        </p>
       )}
       {status === "error" && (
         <p className="px-3 py-3 text-sm text-snow" role="alert">

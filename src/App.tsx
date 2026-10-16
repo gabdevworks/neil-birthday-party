@@ -174,7 +174,8 @@ export default function App() {
                   NEIL MARTIN'S POST BIRTHDAY CELEBRATION
                 </p>
                 <h1 className="mt-7 text-center font-display text-[2.4rem] leading-[0.95] font-semibold tracking-tight text-snow sm:text-7xl">
-                  THIS NIGHT'S GONNA HIT
+                  <span className="block">THIS NIGHT'S</span>
+                  <span className="block">GONNA HIT</span>
                 </h1>
                 <p className="mt-5 max-w-md text-center text-base leading-relaxed text-mist sm:text-lg">
                   Food, drinks, and a party worth clearing your night for. If your name's here, you're in.

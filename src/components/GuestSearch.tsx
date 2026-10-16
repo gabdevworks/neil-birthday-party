@@ -1,6 +1,6 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowRight, X } from "lucide-react";
+import { ArrowRight, LoaderCircle, X } from "lucide-react";
 import type { Guest } from "../data/guests";
 import { openInvitation, readJoiningStatus, resolveGuest, searchGuests } from "../services/guestService";
 import type { OpenedInvitation } from "../types/guest";
@@ -41,9 +41,10 @@ export function GuestSearch({ onContinue, onViewList, locked }: GuestSearchProps
     }
 
     setStatus("loading");
-    Promise.all([searchGuests(value), resolveGuest(value)])
-      .then(([found, exact]) => {
+    searchGuests(value)
+      .then((found) => {
         if (requestId.current !== id) return;
+        const exact = resolveExactGuest(found, value);
         if (exact) {
           setSelected(exact);
           setMatches([]);
@@ -236,6 +237,7 @@ export function GuestSearch({ onContinue, onViewList, locked }: GuestSearchProps
             aria-expanded={showSuggestions}
             aria-controls={listId}
             aria-activedescendant={activeOptionId}
+            aria-busy={status === "loading"}
             placeholder="Enter your name to find your invitation..."
             className="h-14 w-full bg-transparent text-base text-snow outline-none placeholder:text-mist/80 sm:text-lg"
             onChange={(event) => updateQuery(event.target.value)}
@@ -247,6 +249,9 @@ export function GuestSearch({ onContinue, onViewList, locked }: GuestSearchProps
             }}
             onKeyDown={onKeyDown}
           />
+          {status === "loading" && (
+            <LoaderCircle className="size-5 shrink-0 animate-spin text-cyan" aria-hidden="true" />
+          )}
           {query && (
             <button
               type="button"
