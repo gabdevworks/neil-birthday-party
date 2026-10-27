@@ -51,7 +51,7 @@ export function EventDetails() {
           TIME
         </div>
         <p className="font-display text-2xl text-snow sm:text-3xl">{eventDetails.timeLabel}</p>
-        <p className="mt-2 text-sm text-mist">Philippine Time, UTC+8</p>
+        <p className="mt-2 text-sm text-mist">Onwards · Philippine Time, UTC+8</p>
       </motion.div>
 
       <div className="my-5 h-px bg-gradient-to-r from-transparent via-cyan/50 to-transparent" />

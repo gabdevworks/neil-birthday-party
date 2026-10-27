@@ -7,7 +7,7 @@ export const eventDetails = {
   dateLabel: "October 31, 2026",
   monthLabel: "OCTOBER 2026",
   dayLabel: "31",
-  timeLabel: "9:00 PM Onwards",
+  timeLabel: "Party starts at 9:00 PM",
   venue: "The Beech, Panay Avenue",
   timeZone: EVENT_TIME_ZONE,
 } as const;

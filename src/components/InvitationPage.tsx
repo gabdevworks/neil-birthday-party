@@ -42,6 +42,13 @@ export function InvitationPage({ invitation, onChangeGuest, onAttending }: Invit
         <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-mist sm:text-base">
           Food's out, drinks are flowing, and this night is about to take off. Show up, stay late, and don't miss it.
         </p>
+        <p className="mx-auto mt-5 text-sm tracking-[0.12em] text-snow sm:text-base">
+          {eventDetails.dateLabel}
+          <span className="mx-2 text-cyan/70" aria-hidden="true">
+            ·
+          </span>
+          {eventDetails.timeLabel}
+        </p>
         <p className="mx-auto mt-6 inline-block rounded-full border border-cyan/40 bg-cyan/15 px-4 py-2 text-xs tracking-[0.18em] text-cyan shadow-[0_0_24px_rgba(34,211,238,0.35)]">
           Neil Martin's Post Birthday Celebration
         </p>
